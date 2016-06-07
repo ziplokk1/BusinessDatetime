@@ -218,6 +218,12 @@ class BusinessDatetimeCalculator(object):
         return dt - self.get_work_day_start(dt)
 
     def subtract(self, d1, d2):
+        """
+        Return a timedelta representing the amount of business time between two datetime objects.
+        :param d1:
+        :param d2:
+        :return:
+        """
         lesser_date = min(d1, d2)
         greater_date = max(d1, d2)
         lesser_time_total_seconds = self.remaining_time(lesser_date).total_seconds()
@@ -237,6 +243,19 @@ class BusinessDatetimeCalculator(object):
         working_days_seconds = lesser_time_total_seconds + greater_time_total_seconds
         total_seconds_between_time_stamps = working_days_seconds + non_working_days_seconds
         return timedelta(seconds=total_seconds_between_time_stamps)
+
+    def average(self, l):
+        """
+        Average out a list of datetime objects in total working time.
+        :param l:
+        :return:
+        """
+        l = sorted(l)
+        secs = []
+        for i in range(len(l) - 2):
+            diff = self.subtract(l[i], l[i+1])
+            secs.append(diff.total_seconds())
+        return timedelta(seconds=sum(secs) / len(secs))
 
 
 def usage_examples():
